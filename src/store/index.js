@@ -7,6 +7,7 @@ Vue.use(Vuex)
 const state = {
   level: '第一周', // 活动周数
   itemNum: 1, // 第几题
+  allTime: 0, // 总共用时
   timer: '',
   itemDetail: [{
     'topic_id': 20,
@@ -163,7 +164,8 @@ const state = {
       'answer_name': '错误答案',
       'is_standard_answer': 0
     }]
-  }]
+  }],
+  answerid: []
 }
 
 export default new Vuex.Store({

@@ -4,7 +4,7 @@ import Router from 'vue-router'
 import App from '../App'
 import home from '../page/home'
 import item from '../page/item'
-
+import score from '../page/score'
 Vue.use(Router)
 
 // export default new Router({
@@ -30,6 +30,10 @@ export default new Router({
       {
         path: '/item',
         component: item
+      },
+      {
+        path: '/score',
+        component: score
       }]
     }
   ]

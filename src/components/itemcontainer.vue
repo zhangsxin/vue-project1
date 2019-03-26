@@ -13,14 +13,15 @@
 				<div class="item_list_container">
 					<header class="item_title">{{itemDetail[itemNum-1].topic_name}}</header>
 					<ul>
-						<li v-for="(item, index) in itemDetail[itemNum-1].topic_answer" class="item_list">
-							<span class="option_style">{{chooseType(index)}}</span>
+						<li v-for="(item, index) in itemDetail[itemNum-1].topic_answer" class="item_list" @click="choosed(index, item.topic_answer_id)" :key="index">
+							<span class="option_style" :class="{'has_choosed':chooseNum==index}">{{chooseType(index)}}</span>
 							<span class="option_detail">{{item.answer_name}}</span>
 						</li>
 					</ul>
 				</div>
 			</div>
-			<span class="next_item button_style"></span>
+			<span class="next_item button_style" @click="nextItem" v-if="itemNum < itemDetail.length"></span>
+			<span class="submit_item button_style" @click="submitAnswer" v-else></span>
 		</div>
     </section>
     
@@ -28,11 +29,14 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { clearInterval, clearTimeout } from 'timers';
 export default {
     name: 'itemcontainer',
     data() {
         return {
-
+			itemId: null,              //题目ID
+			chooseNum: null,           //选中答案的索引
+			chooseId: null            //选中答案的ID
         }
     },
 	props: ['fatherComponent'],
@@ -40,9 +44,13 @@ export default {
 		'level',   //第几周
 		'itemNum',  //第几题
 		'itemDetail', //题目详情
-		'timer'  //定时器
+		'timer',  //定时器
+		// 'allTime'
 	]),
 	methods:{
+		...mapActions([
+			'addNum', 'initializeData',
+		]),
 		//索引0-3对应答案A-B
 		chooseType: type => {
 			switch(type){
@@ -50,6 +58,32 @@ export default {
 				case 1: return 'B';
 				case 2: return 'C';
 				case 3: return 'D';
+			}
+		},
+		//点击下一题
+		nextItem() {
+			if(this.chooseNum !== null){
+				this.chooseNum = null;
+				this.addNum(this.chooseId)       //保存答案，题目索引加1，跳到下一题
+			}else{
+				alert('还没选答案')
+			}
+		},
+		//选中答案的信息
+		choosed(type,id){
+			this.chooseNum = type;          //选中的是第几个答案
+			this.chooseId = id;            //答案id
+			// console.log(this.chooseNum,this.chooseId)
+		},
+		//到达最后一题，交卷，清空定时器，跳转分时页面
+		submitAnswer() {
+			// console.log(this.allTime)
+			if (this.chooseNum !== null) {
+				this.addNum(this.chooseId)
+				clearTimeout(this.timer)
+				this.$router.push('score')
+			}else{
+				alert('还没选答案')
 			}
 		}
 	},
